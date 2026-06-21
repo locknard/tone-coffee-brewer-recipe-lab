@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#edf6f2" />
+    <title>TONE Coffee Brewer Recipe Lab</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#mainContent">Skip to recipe workspace</a>
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">T</div>
+        <div>
+          <h1>TONE Brewer Lab</h1>
+          <p id="machineLine">TONE Coffee Brewer</p>
+        </div>
+      </div>
+
+      <div class="top-status" data-i18n-aria-label="top.machineStatus">
+        <span id="connectionBadge" class="state-pill" data-i18n="status.reading">Reading</span>
+        <span id="writeStateBadge" class="state-pill locked" data-i18n="status.writesLocked">Writes locked</span>
+      </div>
+
+      <div class="actions">
+        <div class="machine-picker">
+          <select id="machineSelect" name="tone_machine" autocomplete="off" data-i18n-title="action.selectMachine"></select>
+          <button id="discoverButton" data-i18n-title="action.discoverTitle"><span aria-hidden="true">⌕</span> <span data-i18n="action.discover">Discover</span></button>
+        </div>
+        <button id="refreshButton" data-i18n-title="action.refreshTitle"><span aria-hidden="true">↻</span> <span data-i18n="action.refresh">Refresh</span></button>
+        <button id="backupButton" data-i18n-title="action.snapshotTitle"><span aria-hidden="true">↓</span> <span data-i18n="action.snapshot">Snapshot</span></button>
+        <label class="language-picker">
+          <span data-i18n="language.short">Lang</span>
+          <select id="languageSelect" name="language" autocomplete="off" data-i18n-aria-label="language.label" data-i18n-title="language.label">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="operationStatus" class="operation-status idle" aria-live="polite" data-i18n-aria-label="operation.aria">
+        <div class="operation-copy">
+          <span id="operationKicker" data-i18n="operation.idle">Ready</span>
+          <strong id="operationTitle" data-i18n="operation.idle">Ready</strong>
+          <span id="operationDetail" data-i18n="operation.idleDetail">No network operation running.</span>
+        </div>
+        <div class="operation-meter">
+          <span id="operationElapsed">0.0s</span>
+          <div class="operation-track" aria-hidden="true">
+            <span id="operationBar"></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="mainContent" class="app-shell">
+      <aside class="left-rail" data-i18n-aria-label="slots.aria">
+        <section class="panel slots-panel">
+          <div class="section-title">
+            <div>
+              <h2 data-i18n="slots.title">Machine Slots</h2>
+              <p data-i18n="slots.subtitle">Stored recipes</p>
+            </div>
+            <span id="backupStamp"></span>
+          </div>
+          <div id="slotList" class="slot-list"></div>
+        </section>
+
+        <section class="panel device-panel">
+          <div class="section-title">
+            <div>
+              <h2 data-i18n="device.title">Device</h2>
+              <p data-i18n="device.subtitle">Current target</p>
+            </div>
+          </div>
+          <div class="device-readout">
+            <div>
+              <span data-i18n="device.host">Host</span>
+              <strong id="deviceHost">--</strong>
+            </div>
+            <div>
+              <span data-i18n="device.profile">Profile</span>
+              <strong id="deviceProfile">--</strong>
+            </div>
+            <div>
+              <span data-i18n="device.slots">Slots</span>
+              <strong id="deviceSlots">--</strong>
+            </div>
+          </div>
+        </section>
+      </aside>
+
+      <section class="workspace" data-i18n-aria-label="editor.aria">
+        <div class="recipe-head">
+          <div class="recipe-title">
+            <div class="badge-row">
+              <div id="slotBadge" class="badge">Slot</div>
+              <div id="recipeTypeBadge" class="badge muted">Recipe</div>
+            </div>
+            <h2 id="recipeName">Loading</h2>
+            <p id="recipeMeta"></p>
+          </div>
+          <div class="metric-strip" data-i18n-aria-label="metrics.aria">
+            <div class="metric">
+              <span data-i18n="metrics.target">Target</span>
+              <strong id="metricTarget">--</strong>
+            </div>
+            <div class="metric">
+              <span data-i18n="metrics.time">Time</span>
+              <strong id="metricTime">--</strong>
+            </div>
+            <div class="metric">
+              <span data-i18n="metrics.flow">Flow</span>
+              <strong id="metricFlow">--</strong>
+            </div>
+            <div class="metric metric-output">
+              <span data-i18n="metrics.output">Output</span>
+              <strong id="metricOutput">--</strong>
+            </div>
+            <div class="metric">
+              <span data-i18n="metrics.points">Points</span>
+              <strong id="metricPoints">--</strong>
+            </div>
+          </div>
+        </div>
+
+        <section class="chart-wrap">
+          <div class="chart-title">
+            <div>
+              <h3 data-i18n="chart.title">Flow Curve</h3>
+              <p id="chartCaption" data-i18n="chart.captionEmpty">Target flow and temperature timeline</p>
+            </div>
+            <div class="legend" aria-hidden="true">
+              <span><i class="flow-key"></i> <span data-i18n="legend.flow">Flow</span></span>
+              <span><i class="volume-key"></i> <span data-i18n="legend.cumulative">Cumulative</span></span>
+              <span><i class="temp-key"></i> <span data-i18n="legend.temp">Temp</span></span>
+            </div>
+          </div>
+          <svg id="curveChart" viewBox="0 0 980 360" role="img" data-i18n-aria-label="chart.aria"></svg>
+        </section>
+
+        <section class="editor">
+          <div class="editor-grid">
+            <label>
+              <span data-i18n="editor.name">Name</span>
+              <input id="nameInput" name="recipe_name" autocomplete="off" spellcheck="false" />
+            </label>
+            <label>
+              <span data-i18n="editor.type">Type</span>
+              <input id="typeInput" name="recipe_type" autocomplete="off" spellcheck="false" translate="no" />
+            </label>
+            <label>
+              <span data-i18n="editor.targetMl">Target ml</span>
+              <input id="volumeInput" name="target_volume_ml" type="number" min="0" step="1" inputmode="numeric" autocomplete="off" />
+            </label>
+            <label>
+              <span data-i18n="editor.beverage">Beverage</span>
+              <select id="beverageInput" name="beverage" autocomplete="off">
+                <option value="1" data-i18n="beverage.coffee">coffee</option>
+                <option value="2" data-i18n="beverage.tea">tea</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="table-frame">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th data-i18n="table.phase">Phase</th>
+                  <th data-i18n="table.duration">Duration s</th>
+                  <th data-i18n="table.flow">Flow ml/s</th>
+                  <th data-i18n="table.temp">Temp C</th>
+                  <th data-i18n="table.end">End s</th>
+                  <th data-i18n="table.cumulative">Cumulative ml</th>
+                </tr>
+              </thead>
+              <tbody id="pointRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <aside class="right-rail" data-i18n-aria-label="right.aria">
+        <section class="panel write-guard">
+          <div class="section-title">
+            <div>
+              <h2 data-i18n="write.title">Guarded Write</h2>
+              <p id="writeGuardCopy" data-i18n="write.locked">Write mode is locked</p>
+            </div>
+          </div>
+          <div class="write-panel">
+            <label class="sr-only" for="confirmInput" data-i18n="write.confirmLabel">Write confirmation</label>
+            <input id="confirmInput" name="write_confirmation" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="WRITE SLOT N" />
+            <label id="writeTokenField" class="write-token-field" for="writeTokenInput" hidden>
+              <span data-i18n="write.tokenLabel">Remote write token</span>
+              <input id="writeTokenInput" name="write_token" type="password" autocomplete="off" spellcheck="false" data-i18n-placeholder="write.tokenPlaceholder" />
+            </label>
+            <button id="writeButton" data-i18n-title="write.buttonTitle">Write Slot</button>
+          </div>
+          <p id="confirmHint" class="hint" data-i18n="write.hintLocked">Enable writes on the server, then enter the exact confirmation text.</p>
+          <div id="writeProgress" class="write-progress idle" aria-live="polite">
+            <div class="progress-head">
+              <span id="writeProgressLabel" data-i18n="write.stage.ready">Ready</span>
+              <strong id="writeElapsed">0.0s</strong>
+            </div>
+            <div class="progress-track" aria-hidden="true">
+              <span id="writeProgressBar"></span>
+            </div>
+            <ol class="write-steps">
+              <li data-write-step="snapshot" data-i18n="write.step.snapshot">Snapshot</li>
+              <li data-write-step="write" data-i18n="write.step.send">Send</li>
+              <li data-write-step="verify" data-i18n="write.step.confirm">Confirm</li>
+            </ol>
+            <p id="writeProgressDetail" data-i18n="write.detail.idle">No write in progress.</p>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <div>
+              <h2 data-i18n="info.title">Machine Info</h2>
+              <p data-i18n="info.subtitle">Parameters</p>
+            </div>
+            <button id="refreshParamsButton" data-i18n-title="info.refreshTitle" data-i18n="info.paramsButton">Params</button>
+          </div>
+          <div id="parameterList" class="parameter-list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <div>
+              <h2 data-i18n="library.title">Library</h2>
+              <p data-i18n="library.subtitle">Saved recipes</p>
+            </div>
+            <button id="saveLibraryButton" data-i18n-title="library.saveTitle" data-i18n="library.save">Save</button>
+          </div>
+          <div id="libraryList" class="library-list"></div>
+        </section>
+      </aside>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="/app.js"></script>
+  </body>
+</html>
