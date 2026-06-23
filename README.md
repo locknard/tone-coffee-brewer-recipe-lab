@@ -1,5 +1,7 @@
 # TONE Coffee Brewer Recipe Lab
 
+[English](README.en.md) | 简体中文
+
 Unofficial local HTTP recipe manager and automation toolkit for TONE Coffee Brewer users.
 
 非官方的 TONE Coffee Brewer 本地 HTTP 配方管理工具，用于读取、备份、编辑和写入咖啡机配方，并为 Home Assistant、蓝牙秤联动和自动化调参预留接口。

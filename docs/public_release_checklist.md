@@ -5,6 +5,7 @@ Use this checklist before creating the first public GitHub repository.
 ## Include
 
 - `README.md`
+- `README.en.md`
 - `tone/`
 - `tone_manager/`
 - `docs/`
